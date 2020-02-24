@@ -2,12 +2,14 @@ import React, {useState,useEffect} from 'react';
 import './App.css';
 import DisplayStatusFileData from "./content/displayStatusFileData"
 import loadFileData from "./content/loadFileData"
+import DisplayFocusedPackage from "./content/displayFocusedPackage"
 
 
 function App() {
   const [statusFile, setStatusFiles] = useState();
   const [fileDataAsText, setFileDataAsText] = useState();
-  const [orderedFileData, setOrderedFileData] = useState();
+  const [orderedFileData, setOrderedFileData] = useState(); // list of all single package info strings
+  const [focusedPackage, setFocusedPackage] = useState();
 
   useEffect(
       ()=>{
@@ -31,10 +33,12 @@ function App() {
           <h1>
           {statusFile.name}
           </h1>
-          <p>
-            {statusFile.size}
-          </p>
-            <DisplayStatusFileData fileDataAsText={fileDataAsText}/>
+            <div>
+                <DisplayFocusedPackage setFocusedPackage={setFocusedPackage}
+                                       orderedFileData={orderedFileData}
+                                       focusedPackage={focusedPackage}/>
+            </div>
+            <DisplayStatusFileData fileDataAsText={orderedFileData} setFocusedPackage={setFocusedPackage}/>
         </div>
     )
   }
