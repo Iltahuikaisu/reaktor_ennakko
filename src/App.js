@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState,useEffect} from 'react';
 import './App.css';
+import DisplayStatusFileData from "./content/displayStatusFileData"
+import loadFileData from "./content/loadFileData"
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [statusFile, setStatusFiles] = useState();
+  const [fileDataAsText, setFileDataAsText] = useState();
+  const [orderedFileData, setOrderedFileData] = useState();
+
+  useEffect(
+      ()=>{
+          loadFileData(statusFile, setFileDataAsText,setOrderedFileData)
+
+      },[statusFile]
+  )
+
+  if(!statusFile) {
+      console.log(statusFile)
+    return (
+        <div>
+          <input type="file" onChange={(value) => {
+            setStatusFiles(value.target.files[0])}}/>
+        </div>
+    );
+  } else {
+      console.log(statusFile)
+    return(
+        <div>
+          <h1>
+          {statusFile.name}
+          </h1>
+          <p>
+            {statusFile.size}
+          </p>
+            <DisplayStatusFileData fileDataAsText={fileDataAsText}/>
+        </div>
+    )
+  }
 }
 
 export default App;
