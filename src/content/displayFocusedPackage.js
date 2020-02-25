@@ -13,19 +13,7 @@ const SetFocusLink = (props) => {
 }
 
 const stringToEscaped = (word) => {
-    let escapedWord = ""
-    let charactersToEscape = "[\\^$.|?*+()"
-    for (let i = 0; i < word.length; i++) {
-        for(let j = 0; j < charactersToEscape; j++) {
-            if (charactersToEscape[j] === word[i]) {
-                escapedWord = escapedWord.concat("\\")
-            }
-            escapedWord = escapedWord.concat(word[i])
-        }
-
-    }
-    console.log(escapedWord)
-    return(escapedWord)
+    return(word.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'))
 }
 
 
@@ -99,10 +87,42 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
 }
 
 const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
+    let reverseDependenciesAllData = orderedFileData.map(
+        (value)=> {
+            console.log(value)
+            let dependents = searchFieldData('Depends', value)
+            let reverseDependentHit
+            console.log(dependents)
+            if (dependents) {
+                reverseDependentHit = dependents.match(new RegExp(`${focusedPackage}`,'g'))
+            } else {
+                return null
+            }
+            console.log(reverseDependentHit)
+            if( reverseDependentHit) {
+                return(reverseDependentHit)
+            } else {
+                return null
+            }
+        }
+    )
+    let dependencyList = []
+    dependencyList =  []
+    for(let i = 0; i < reverseDependenciesAllData.length; i++) {
+        if(reverseDependenciesAllData[i]) {
+            dependencyList.push(
+                <div key={`rev-dep ${i}`}>
+                  <SetFocusLink name={searchFieldData('Package', orderedFileData[i])} setFocusedPackage={setFocusedPackage}/>  
+                </div>
+                )
+        }
+    }
+
     return(
-        <h3>
-            rev-deps
-        </h3>
+        <div>
+            <h3>Reverse Dependencies</h3>
+            {dependencyList}
+        </div>
     )
 }
 
