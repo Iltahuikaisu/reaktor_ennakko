@@ -1,22 +1,48 @@
 import React from "react";
 
 const SetFocusLink = (props) => {
+    let newName = props.name
     return(
-    <div>
-        <a  onClick={()=>{props.setFocusedPackage(props.name)}}>{props.name}</a>
-    </div>
+    <ul>
+        <a  onClick={()=>{props.setFocusedPackage((value)=>{
+            return(newName[0])
+            })}}>{props.name}</a>
+    </ul>
     )
 }
 
-const Dependencies = (props) => {
+const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
+    console.log(focusedPackage)
+    let dependRawData=orderedFileData[0].match(/Package: (.*)Depends:\s*.*\n(\s.*\n)*/g)
+    console.log(dependRawData)
+    let singleDependencies = dependRawData[0].match(/\s*[^,]*\s*,/g)
+    console.log(singleDependencies)
+    let dependenciesDisplay = singleDependencies.map(
+        (value)=> {
+            let options = value.match(/.*(|.*)+/g)
+            let result
+            if(options) {
+                for (let i =0 ; i < options.length; i++) {
+
+                }
+            }
+            return(
+                <li key={"dep" + value + focusedPackage[0]}>
+                <SetFocusLink setFocusedPackage={setFocusedPackage} name={value.match(/[A-Za-z0-9\-_]*/g)}/>
+                </li>
+            )
+        }
+    )
+
+
     return(
         <div>
-            deps
+            {dependenciesDisplay}
         </div>
     )
 }
 
-const ReverseDependencies = (props) => {
+const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
     return(
         <div>
             rev-deps
@@ -26,9 +52,7 @@ const ReverseDependencies = (props) => {
 
 const DisplayFocusedPackage = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
     if(focusedPackage) {
-        let descriptionBrief = orderedFileData[0].match(/Description: .*/g)
-        let dependencies
-        let reverseDependencies
+        let descriptionBrief = orderedFileData[0].match(/Description:\s.*/g)
         let name = focusedPackage
 
         return (

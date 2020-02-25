@@ -11,6 +11,7 @@ function App() {
   const [orderedFileData, setOrderedFileData] = useState(); // list of all single package info strings
   const [focusedPackage, setFocusedPackage] = useState();
 
+  console.log("app rendered")
   useEffect(
       ()=>{
           loadFileData(statusFile, setFileDataAsText,setOrderedFileData)
