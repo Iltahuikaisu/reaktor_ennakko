@@ -3,34 +3,90 @@ import React from "react";
 const SetFocusLink = (props) => {
     let newName = props.name
     return(
-    <ul>
+    <>
         <a  onClick={()=>{props.setFocusedPackage((value)=>{
-            return(newName[0])
-            })}}>{props.name}</a>
-    </ul>
+            console.log(`NewName: ${newName}`)
+            return(newName)
+            })}}>{newName}</a>
+    </>
     )
 }
 
+const stringToEscaped = (word) => {
+    let escapedWord = ""
+    let charactersToEscape = "[\\^$.|?*+()"
+    for (let i = 0; i < word.length; i++) {
+        for(let j = 0; j < charactersToEscape; j++) {
+            if (charactersToEscape[j] === word[i]) {
+                escapedWord = escapedWord.concat("\\")
+            }
+            escapedWord = escapedWord.concat(word[i])
+        }
+
+    }
+    console.log(escapedWord)
+    return(escapedWord)
+}
+
+
+const searchPackageData = (packageName, file) => {
+    for(let i = 0;  i < file.length;i++) {
+        console.log(`Sought package name ${packageName}`)
+        if(file[i].match(new RegExp(`Package: *${stringToEscaped(packageName)}$`,'m'))) {
+
+            return( file[i])
+        }
+    }
+}
+
+const searchFieldData = (fieldName, singlePackageData) => {
+    for(let i = 0;  i < singlePackageData.length;i++) {
+        let fieldData = singlePackageData.match(new RegExp(`^${fieldName}: .*`,'m'))
+        if(fieldData) {
+            return( fieldData[0].substring(fieldName.length + 2))
+        }
+    }
+}
+
 const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
-    console.log(focusedPackage)
-    let dependRawData=orderedFileData[0].match(/Package: (.*)Depends:\s*.*\n(\s.*\n)*/g)
-    console.log(dependRawData)
-    let singleDependencies = dependRawData[0].match(/\s*[^,]*\s*,/g)
-    console.log(singleDependencies)
+    let dependRawData = searchFieldData('Depends',searchPackageData(focusedPackage,orderedFileData))
+    console.log(`Displayedt package name`)
+
+    if(!dependRawData) {
+        return(
+            <>
+                <h3>No dependencies</h3>
+            </>
+        )
+    }
+
+    let singleDependencies = dependRawData.match(/[^,|]+/g)
+
+    if(!singleDependencies) {
+        return(
+            <>
+                <h3>No dependencies</h3>
+            </>
+        )
+    }
     let dependenciesDisplay = singleDependencies.map(
         (value)=> {
-            let options = value.match(/.*(|.*)+/g)
-            let result
-            if(options) {
-                for (let i =0 ; i < options.length; i++) {
+            let dependencyName = value.trim().match(/[^\s]+/)[0]
+            console.log(`dependencyName: ${dependencyName}`)
+            if (searchPackageData(dependencyName, orderedFileData)) {
+                return (
+                    <li key={"dep" + value + focusedPackage[0]}>
+                        <SetFocusLink setFocusedPackage={setFocusedPackage} name={dependencyName}/>
+                    </li>
+                )
+            } else {
+                return(
+                    <li key={"opt dep" + value + focusedPackage[0]}>
+                        Optional dependency: {dependencyName}
+                    </li>
+                )
 
-                }
             }
-            return(
-                <li key={"dep" + value + focusedPackage[0]}>
-                <SetFocusLink setFocusedPackage={setFocusedPackage} name={value.match(/[A-Za-z0-9\-_]*/g)}/>
-                </li>
-            )
         }
     )
 
@@ -44,21 +100,25 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
 
 const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
     return(
-        <div>
+        <h3>
             rev-deps
-        </div>
+        </h3>
     )
 }
 
 const DisplayFocusedPackage = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
+
     if(focusedPackage) {
-        let descriptionBrief = orderedFileData[0].match(/Description:\s.*/g)
+        console.log(`Focused package: ${focusedPackage}`)
+        let packageData = searchPackageData(focusedPackage,orderedFileData)
+        let descriptionBrief = searchFieldData("Description",packageData)
         let name = focusedPackage
 
         return (
             <div>
-               <h3>{name}</h3>
+               <h3>{searchFieldData("Package",packageData)}</h3>
                 <p>{descriptionBrief}</p>
+                <h4>Dependencies</h4>
                 <Dependencies focusedPackage={focusedPackage}
                               setFocusedPackage={setFocusedPackage}
                               orderedFileData={orderedFileData}/>

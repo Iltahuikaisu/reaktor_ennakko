@@ -39,6 +39,7 @@ function App() {
                                        orderedFileData={orderedFileData}
                                        focusedPackage={focusedPackage}/>
             </div>
+            <h4>All Packages</h4>
             <DisplayStatusFileData fileDataAsText={orderedFileData} setFocusedPackage={setFocusedPackage}/>
         </div>
     )
