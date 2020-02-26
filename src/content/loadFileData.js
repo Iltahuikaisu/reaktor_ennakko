@@ -1,4 +1,4 @@
-import processStatusData from "./processStatusData"
+import processStatusData from "./processFileData"
 const loadData = (file,setFileData,setProcessedData) => {
     let reader = new FileReader()
     reader.onloadend = (evt)=>{

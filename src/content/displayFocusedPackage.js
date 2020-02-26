@@ -1,13 +1,13 @@
 import React from "react";
+import './display.css';
 
 const SetFocusLink = (props) => {
     let newName = props.name
     return(
     <>
-        <a  onClick={()=>{props.setFocusedPackage((value)=>{
-            console.log(`NewName: ${newName}`)
+        <button  onClick={()=>{props.setFocusedPackage((value)=>{
             return(newName)
-            })}}>{newName}</a>
+            })}}>{newName}</button>
     </>
     )
 }
@@ -19,8 +19,7 @@ const stringToEscaped = (word) => {
 
 const searchPackageData = (packageName, file) => {
     for(let i = 0;  i < file.length;i++) {
-        console.log(`Sought package name ${packageName}`)
-        if(file[i].match(new RegExp(`Package: *${stringToEscaped(packageName)}$`,'m'))) {
+        if(file[i].match(new RegExp(`Package: *${stringToEscaped(packageName)}[\n\\s]`,'m'))) {
 
             return( file[i])
         }
@@ -42,9 +41,10 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
 
     if(!dependRawData) {
         return(
-            <>
-                <h3>No dependencies</h3>
-            </>
+            <div>
+                <h3>Dependencies</h3>
+                None
+            </div>
         )
     }
 
@@ -52,9 +52,10 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
 
     if(!singleDependencies) {
         return(
-            <>
-                <h3>No dependencies</h3>
-            </>
+            <div>
+                <h3>Dependencies</h3>
+                None
+            </div>
         )
     }
     let dependenciesDisplay = singleDependencies.map(
@@ -70,7 +71,7 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
             } else {
                 return(
                     <li key={"opt dep" + value + focusedPackage[0]}>
-                        Optional dependency: {dependencyName}
+                        {dependencyName}
                     </li>
                 )
 
@@ -80,7 +81,8 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
 
 
     return(
-        <div>
+        <div className={focusedPackage}>
+            <h3>Dependencies</h3>
             {dependenciesDisplay}
         </div>
     )
@@ -89,16 +91,14 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
 const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
     let reverseDependenciesAllData = orderedFileData.map(
         (value)=> {
-            console.log(value)
             let dependents = searchFieldData('Depends', value)
             let reverseDependentHit
-            console.log(dependents)
             if (dependents) {
-                reverseDependentHit = dependents.match(new RegExp(`${focusedPackage}`,'g'))
+                reverseDependentHit = dependents.match(
+                    new RegExp(`${stringToEscaped(focusedPackage)}[\n\\s]`,'g'))
             } else {
                 return null
             }
-            console.log(reverseDependentHit)
             if( reverseDependentHit) {
                 return(reverseDependentHit)
             } else {
@@ -117,6 +117,16 @@ const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData})
                 )
         }
     }
+    if(dependencyList.length ===0) {
+        return(
+            <div>
+            <h3>
+                Reverse Dependencies
+            </h3>
+                None
+            </div>
+        )
+    }
 
     return(
         <div>
@@ -129,16 +139,22 @@ const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData})
 const DisplayFocusedPackage = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
 
     if(focusedPackage) {
-        console.log(`Focused package: ${focusedPackage}`)
         let packageData = searchPackageData(focusedPackage,orderedFileData)
         let descriptionBrief = searchFieldData("Description",packageData)
         let name = focusedPackage
 
         return (
-            <div>
+            <div style={{
+                top:0,
+                right:0,
+                width:'50%',
+                height:'100%',
+                overflowY: "auto",
+                position: "fixed",
+            }
+            }>
                <h3>{searchFieldData("Package",packageData)}</h3>
                 <p>{descriptionBrief}</p>
-                <h4>Dependencies</h4>
                 <Dependencies focusedPackage={focusedPackage}
                               setFocusedPackage={setFocusedPackage}
                               orderedFileData={orderedFileData}/>

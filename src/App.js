@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from 'react';
 import './App.css';
-import DisplayStatusFileData from "./content/displayStatusFileData"
+import DisplayStatusFileData from "./content/displayAllPackageNames"
 import loadFileData from "./content/loadFileData"
 import DisplayFocusedPackage from "./content/displayFocusedPackage"
 

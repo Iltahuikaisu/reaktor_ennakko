@@ -1,4 +1,5 @@
 import React from "react";
+import './display.css';
 
 
 
@@ -12,7 +13,7 @@ const displayData = ({fileDataAsText,setFocusedPackage}) => {
                 if (name) {
                     return (
                         <div key={name}>
-                            <a  onClick={()=>{setFocusedPackage(name)}}>{name}</a>
+                            <button  onClick={()=>{setFocusedPackage(name)}}>{name}</button>
                         </div>
                     )
                 } else {
