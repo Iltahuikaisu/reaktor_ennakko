@@ -1,5 +1,4 @@
 import React from "react";
-import './display.css';
 
 const SetFocusLink = (props) => {
     let newName = props.name
@@ -93,12 +92,14 @@ const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData})
         (value)=> {
             let dependents = searchFieldData('Depends', value)
             let reverseDependentHit
+
             if (dependents) {
                 reverseDependentHit = dependents.match(
                     new RegExp(`${stringToEscaped(focusedPackage)}[\n\\s]`,'g'))
             } else {
                 return null
             }
+
             if( reverseDependentHit) {
                 return(reverseDependentHit)
             } else {
@@ -107,8 +108,8 @@ const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData})
         }
     )
     let dependencyList = []
-    dependencyList =  []
     for(let i = 0; i < reverseDependenciesAllData.length; i++) {
+
         if(reverseDependenciesAllData[i]) {
             dependencyList.push(
                 <div key={`rev-dep ${i}`}>
@@ -117,6 +118,7 @@ const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData})
                 )
         }
     }
+
     if(dependencyList.length ===0) {
         return(
             <div>
