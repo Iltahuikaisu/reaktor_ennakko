@@ -12,7 +12,7 @@ locally
 
 ## Usage
 
-You have to browse to your control file, you want to examine. If you select wrong file you need to manually reload.
+You have to browse to your control file, you want to examine. 
 
 ## Licence
 GNU AGPLv3
