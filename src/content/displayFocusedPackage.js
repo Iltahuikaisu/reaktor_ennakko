@@ -82,6 +82,7 @@ const ReverseDependencies = ({focusedPackage, setFocusedPackage, allPackagesStri
 
 const DisplayFocusedPackage = ({focusedPackage, setFocusedPackage, allPackagesStringArray}) => {
 
+
     if (focusedPackage) {
         let packageData = RegexQueries.searchPackageData(focusedPackage, allPackagesStringArray)
         let descriptionBrief = RegexQueries.searchFieldData("Description", packageData)
@@ -108,10 +109,9 @@ const DisplayFocusedPackage = ({focusedPackage, setFocusedPackage, allPackagesSt
         )
 
     } else {
-        return(
-            <div>
-                select package for inspection
-            </div>
+        return (
+            <>
+            </>
         )
     }
 }

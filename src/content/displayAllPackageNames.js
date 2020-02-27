@@ -9,7 +9,16 @@ import RegexQueries from './regexQueries'
  * @param setFocusedPackage
  * @returns {react element}
  */
-const displayData = ({packageDataStringArray, setFocusedPackage}) => {
+const displayData = ({packageDataStringArray, setFocusedPackage, statusFile}) => {
+    if (!statusFile) {
+        return (
+            <div>
+                Determine the control file you want to examine
+            </div>
+        )
+    }
+
+
     if (packageDataStringArray) {
         let htmlOfAllDependencies = packageDataStringArray.sort().map(
             (value) => {

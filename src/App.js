@@ -6,44 +6,38 @@ import DisplayFocusedPackage from "./content/displayFocusedPackage"
 
 function App() {
     const [statusFile, setStatusFiles] = useState();
-    const [packageDataStringArray, setPackageDataStringArray] = useState(); // list of all single package info strings
+    const [allPackagesDataStringArray, setAllPackagesDataStringArray] = useState();
     const [focusedPackageName, setFocusedPackageName] = useState();
 
     useEffect(
         () => {
-            loadFileData(statusFile, setPackageDataStringArray)
+            loadFileData(statusFile, setAllPackagesDataStringArray)
 
         }, [statusFile]
     )
 
-    if (!statusFile) {
-        return (
-        <div>
-          <input type="file" onChange={(value) => {
-            setStatusFiles(value.target.files[0])}}/>
-        </div>
-    );
-  } else {
+
     return(
         <div>
-            <h1>
-                {statusFile.name}
-            </h1>
+            <h3>Select file for inspection</h3>
             <div>
+
                 <input type="file" onChange={(value) => {
-                    setStatusFiles(value.target.files[0])}}/>
+                    setStatusFiles(value.target.files[0])
+                }}/>
             </div>
             <div>
                 <DisplayFocusedPackage setFocusedPackage={setFocusedPackageName}
-                                       allPackagesStringArray={packageDataStringArray}
+                                       allPackagesStringArray={allPackagesDataStringArray}
                                        focusedPackage={focusedPackageName}/>
             </div>
             <h4>All Packages</h4>
-            <DisplayAllPackageNames packageDataStringArray={packageDataStringArray}
-                                    setFocusedPackage={setFocusedPackageName}/>
+            <DisplayAllPackageNames packageDataStringArray={allPackagesDataStringArray}
+                                    setFocusedPackage={setFocusedPackageName}
+                                    statusFile={statusFile}/>
         </div>
     )
-  }
+
 }
 
 export default App;
