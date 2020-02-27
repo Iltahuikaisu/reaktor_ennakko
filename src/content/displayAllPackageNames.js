@@ -1,18 +1,25 @@
 import React from "react";
+import RegexQueries from './regexQueries'
 
 
-
-const displayData = ({fileDataAsText,setFocusedPackage}) => {
-    console.log("display data")
-
-    if(fileDataAsText) {
-        let htmlOfAllDependencies = fileDataAsText.sort().map(
-            (value)=> {
-                let name = value.match(/Package: (.*)/g)[0].substring(9)
+/**
+ * Lists all packages as interactive buttons
+ *
+ * @param packageDataStringArray
+ * @param setFocusedPackage
+ * @returns {react element}
+ */
+const displayData = ({packageDataStringArray, setFocusedPackage}) => {
+    if (packageDataStringArray) {
+        let htmlOfAllDependencies = packageDataStringArray.sort().map(
+            (value) => {
+                let name = RegexQueries.searchFieldData('Package', value)
                 if (name) {
                     return (
                         <div key={name}>
-                            <button  onClick={()=>{setFocusedPackage(name)}}>{name}</button>
+                            <button onClick={() => {
+                                setFocusedPackage(name)
+                            }}>{name}</button>
                         </div>
                     )
                 } else {

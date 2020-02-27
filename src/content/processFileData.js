@@ -1,13 +1,16 @@
-import React from "react"
-const processData = (data)=>{
-    let packages = data.match(/Package: (\n.|.)*/g)
-    console.log(packages[0])
+import RegexQueries from './regexQueries'
 
-
-
-return(
-    packages
-)
+/**
+ * Processes data to array of single package data strings
+ *
+ * @param data, package file data
+ * @returns string[],  undefined
+ */
+const processData = (data) => {
+    let packages = RegexQueries.splitDataToPackageArrayList(data)
+    return (
+        packages
+    )
 }
 
 

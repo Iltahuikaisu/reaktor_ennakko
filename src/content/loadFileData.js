@@ -1,9 +1,15 @@
 import processStatusData from "./processFileData"
-const loadData = (file,setFileData,setProcessedData) => {
+
+/**
+ * Reads the package file and sets
+ *
+ * @param file
+ * @param setFileData
+ * @param setProcessedData
+ */
+const loadData = (file, setProcessedData) => {
     let reader = new FileReader()
-    reader.onloadend = (evt)=>{
-        console.log(evt.target.result)
-        setFileData(evt.target.result)
+    reader.onloadend = (evt) => {
         setProcessedData(processStatusData(evt.target.result))
     }
     if (file) {

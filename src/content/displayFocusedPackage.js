@@ -1,4 +1,5 @@
 import React from "react";
+import RegexQueries from './regexQueries'
 
 const SetFocusLink = (props) => {
     let newName = props.name
@@ -15,42 +16,10 @@ const stringToEscaped = (word) => {
     return(word.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'))
 }
 
-
-const searchPackageData = (packageName, file) => {
-    for(let i = 0;  i < file.length;i++) {
-        if(file[i].match(new RegExp(`Package: *${stringToEscaped(packageName)}[\n\\s]`,'m'))) {
-
-            return( file[i])
-        }
-    }
-}
-
-const searchFieldData = (fieldName, singlePackageData) => {
-    for(let i = 0;  i < singlePackageData.length;i++) {
-        let fieldData = singlePackageData.match(new RegExp(`^${fieldName}: .*`,'m'))
-        if(fieldData) {
-            return( fieldData[0].substring(fieldName.length + 2))
-        }
-    }
-}
-
-const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
-    let dependRawData = searchFieldData('Depends',searchPackageData(focusedPackage,orderedFileData))
-    console.log(`Displayedt package name`)
-
-    if(!dependRawData) {
-        return(
-            <div>
-                <h3>Dependencies</h3>
-                None
-            </div>
-        )
-    }
-
-    let singleDependencies = dependRawData.match(/[^,|]+/g)
-
-    if(!singleDependencies) {
-        return(
+const Dependencies = ({focusedPackage, setFocusedPackage, allPackagesStringArray}) => {
+    let singleDependencies = RegexQueries.searchDependencies(focusedPackage, allPackagesStringArray)
+    if (!singleDependencies) {
+        return (
             <div>
                 <h3>Dependencies</h3>
                 None
@@ -58,17 +27,16 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
         )
     }
     let dependenciesDisplay = singleDependencies.map(
-        (value)=> {
+        (value) => {
             let dependencyName = value.trim().match(/[^\s]+/)[0]
-            console.log(`dependencyName: ${dependencyName}`)
-            if (searchPackageData(dependencyName, orderedFileData)) {
+            if (RegexQueries.searchPackageData(dependencyName, allPackagesStringArray)) {
                 return (
                     <li key={"dep" + value + focusedPackage[0]}>
                         <SetFocusLink setFocusedPackage={setFocusedPackage} name={dependencyName}/>
                     </li>
                 )
             } else {
-                return(
+                return (
                     <li key={"opt dep" + value + focusedPackage[0]}>
                         {dependencyName}
                     </li>
@@ -77,8 +45,6 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
             }
         }
     )
-
-
     return(
         <div className={focusedPackage}>
             <h3>Dependencies</h3>
@@ -87,49 +53,29 @@ const Dependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
     )
 }
 
-const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
-    let reverseDependenciesAllData = orderedFileData.map(
-        (value)=> {
-            let dependents = searchFieldData('Depends', value)
-            let reverseDependentHit
-
-            if (dependents) {
-                reverseDependentHit = dependents.match(
-                    new RegExp(`${stringToEscaped(focusedPackage)}[\n\\s]`,'g'))
-            } else {
-                return null
-            }
-
-            if( reverseDependentHit) {
-                return(reverseDependentHit)
-            } else {
-                return null
-            }
-        }
-    )
-    let dependencyList = []
-    for(let i = 0; i < reverseDependenciesAllData.length; i++) {
-
-        if(reverseDependenciesAllData[i]) {
-            dependencyList.push(
-                <div key={`rev-dep ${i}`}>
-                  <SetFocusLink name={searchFieldData('Package', orderedFileData[i])} setFocusedPackage={setFocusedPackage}/>  
-                </div>
-                )
-        }
-    }
-
-    if(dependencyList.length ===0) {
-        return(
+const ReverseDependencies = ({focusedPackage, setFocusedPackage, allPackagesStringArray}) => {
+    let reverseDependenciesAllData = RegexQueries.searchReverseDependencies(focusedPackage, allPackagesStringArray)
+    if (!reverseDependenciesAllData) {
+        return (
             <div>
-            <h3>
-                Reverse Dependencies
-            </h3>
+                <h3>
+                    Reverse Dependencies
+                </h3>
                 None
             </div>
         )
     }
 
+    let dependencyList = []
+    for (let i = 0; i < reverseDependenciesAllData.length; i++) {
+        dependencyList.push(
+            <div key={`rev-dep ${i}`}>
+                <SetFocusLink name={RegexQueries.searchFieldData('Package', reverseDependenciesAllData[i])}
+                              setFocusedPackage={setFocusedPackage}/>
+            </div>
+        )
+
+    }
     return(
         <div>
             <h3>Reverse Dependencies</h3>
@@ -138,31 +84,30 @@ const ReverseDependencies = ({focusedPackage,setFocusedPackage,orderedFileData})
     )
 }
 
-const DisplayFocusedPackage = ({focusedPackage,setFocusedPackage,orderedFileData}) => {
+const DisplayFocusedPackage = ({focusedPackage, setFocusedPackage, allPackagesStringArray}) => {
 
-    if(focusedPackage) {
-        let packageData = searchPackageData(focusedPackage,orderedFileData)
-        let descriptionBrief = searchFieldData("Description",packageData)
-        let name = focusedPackage
+    if (focusedPackage) {
+        let packageData = RegexQueries.searchPackageData(focusedPackage, allPackagesStringArray)
+        let descriptionBrief = RegexQueries.searchFieldData("Description", packageData)
 
         return (
             <div style={{
-                top:0,
-                right:0,
-                width:'50%',
-                height:'100%',
+                top: 0,
+                right: 0,
+                width: '50%',
+                height: '100%',
                 overflowY: "auto",
                 position: "fixed",
             }
             }>
-               <h3>{searchFieldData("Package",packageData)}</h3>
+                <h3>{RegexQueries.searchFieldData("Package", packageData)}</h3>
                 <p>{descriptionBrief}</p>
                 <Dependencies focusedPackage={focusedPackage}
                               setFocusedPackage={setFocusedPackage}
-                              orderedFileData={orderedFileData}/>
+                              allPackagesStringArray={allPackagesStringArray}/>
                 <ReverseDependencies focusedPackage={focusedPackage}
                                      setFocusedPackage={setFocusedPackage}
-                                     orderedFileData={orderedFileData}/>
+                                     allPackagesStringArray={allPackagesStringArray}/>
             </div>
         )
 

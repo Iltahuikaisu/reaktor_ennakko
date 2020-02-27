@@ -1,46 +1,43 @@
 import React, {useState,useEffect} from 'react';
 import './App.css';
-import DisplayStatusFileData from "./content/displayAllPackageNames"
+import DisplayAllPackageNames from "./content/displayAllPackageNames"
 import loadFileData from "./content/loadFileData"
 import DisplayFocusedPackage from "./content/displayFocusedPackage"
 
 
 function App() {
-  const [statusFile, setStatusFiles] = useState();
-  const [fileDataAsText, setFileDataAsText] = useState();
-  const [orderedFileData, setOrderedFileData] = useState(); // list of all single package info strings
-  const [focusedPackage, setFocusedPackage] = useState();
+    const [statusFile, setStatusFiles] = useState();
+    const [packageDataStringArray, setPackageDataStringArray] = useState(); // list of all single package info strings
+    const [focusedPackageName, setFocusedPackageName] = useState();
 
-  console.log("app rendered")
-  useEffect(
-      ()=>{
-          loadFileData(statusFile, setFileDataAsText,setOrderedFileData)
+    useEffect(
+        () => {
+            loadFileData(statusFile, setPackageDataStringArray)
 
-      },[statusFile]
-  )
+        }, [statusFile]
+    )
 
-  if(!statusFile) {
-      console.log(statusFile)
-    return (
+    if (!statusFile) {
+        return (
         <div>
           <input type="file" onChange={(value) => {
             setStatusFiles(value.target.files[0])}}/>
         </div>
     );
   } else {
-      console.log(statusFile)
     return(
         <div>
-          <h1>
-          {statusFile.name}
-          </h1>
+            <h1>
+                {statusFile.name}
+            </h1>
             <div>
-                <DisplayFocusedPackage setFocusedPackage={setFocusedPackage}
-                                       orderedFileData={orderedFileData}
-                                       focusedPackage={focusedPackage}/>
+                <DisplayFocusedPackage setFocusedPackage={setFocusedPackageName}
+                                       allPackagesStringArray={packageDataStringArray}
+                                       focusedPackage={focusedPackageName}/>
             </div>
             <h4>All Packages</h4>
-            <DisplayStatusFileData fileDataAsText={orderedFileData} setFocusedPackage={setFocusedPackage}/>
+            <DisplayAllPackageNames packageDataStringArray={packageDataStringArray}
+                                    setFocusedPackage={setFocusedPackageName}/>
         </div>
     )
   }
