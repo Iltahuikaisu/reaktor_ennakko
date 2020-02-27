@@ -30,6 +30,10 @@ function App() {
                 {statusFile.name}
             </h1>
             <div>
+                <input type="file" onChange={(value) => {
+                    setStatusFiles(value.target.files[0])}}/>
+            </div>
+            <div>
                 <DisplayFocusedPackage setFocusedPackage={setFocusedPackageName}
                                        allPackagesStringArray={packageDataStringArray}
                                        focusedPackage={focusedPackageName}/>
