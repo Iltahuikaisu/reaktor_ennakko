@@ -1,8 +1,20 @@
-import React from "react";
-
 const stringToEscaped = (word) => {
     return (word.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'))
 }
+
+/**
+ * Processes data to array of single package data strings
+ *
+ * @param data, package file data
+ * @returns string[],  undefined
+ */
+const processData = (data) => {
+    let packages = splitDataToPackageArrayList(data)
+    return (
+        packages
+    )
+}
+
 /**
  * Splits the data to list of packageData strings
  *
@@ -69,7 +81,6 @@ const searchReverseDependencies = (focusedPackageName, allPackagesArrayString) =
     if (dependents.length === 0) {
         return (null)
     }
-    console.log(dependents)
 
     return (dependents)
 }
@@ -121,5 +132,5 @@ const searchFieldData = (fieldName, singlePackageData) => {
 
 export default {
     searchPackageData, searchFieldData, splitDataToPackageArrayList,
-    searchDependencies, searchReverseDependencies
+    searchDependencies, searchReverseDependencies, processData
 }

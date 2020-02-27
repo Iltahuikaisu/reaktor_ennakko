@@ -1,4 +1,4 @@
-import processStatusData from "./processFileData"
+import RegexQueries from "./regexQueries"
 
 /**
  * Reads the package file and sets
@@ -10,7 +10,7 @@ import processStatusData from "./processFileData"
 const loadData = (file, setProcessedData) => {
     let reader = new FileReader()
     reader.onloadend = (evt) => {
-        setProcessedData(processStatusData(evt.target.result))
+        setProcessedData(RegexQueries.processData(evt.target.result))
     }
     if (file) {
         reader.readAsText(file)

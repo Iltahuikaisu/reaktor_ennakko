@@ -1,5 +1,4 @@
 import React, {useState,useEffect} from 'react';
-import './App.css';
 import DisplayAllPackageNames from "./content/displayAllPackageNames"
 import loadFileData from "./content/loadFileData"
 import DisplayFocusedPackage from "./content/displayFocusedPackage"

@@ -12,10 +12,6 @@ const SetFocusLink = (props) => {
     )
 }
 
-const stringToEscaped = (word) => {
-    return(word.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'))
-}
-
 const Dependencies = ({focusedPackage, setFocusedPackage, allPackagesStringArray}) => {
     let singleDependencies = RegexQueries.searchDependencies(focusedPackage, allPackagesStringArray)
     if (!singleDependencies) {
